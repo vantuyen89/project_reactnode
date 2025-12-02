@@ -126,6 +126,11 @@ export function Signin() {
             </Link>
           </FormDescription>
         </Form>
+        <div className='text-right mt-1'>
+          <Link to='/auth/forgot-password' className='text-sm text-purple-600 hover:underline'>
+            Quên mật khẩu?
+          </Link>
+        </div>
       </div>
     </div>
   )

@@ -55,3 +55,18 @@ export const loginWithGoogle = (payload: any) => {
   const data = instance.post(`/auth/loginGG`, payload)
   return data
 }
+
+export const apiForgotPassword = (email: string) => {
+  const data = instance.post('/auth/forgot-password', { email: email })
+  return data
+}
+
+// 2) verify OTP và nhận resetToken
+export const apiVerifyOtp = (payload: { email: string; otp: string }) => {
+  return instance.post('/auth/verify-otp', payload)
+}
+
+// 3) reset password với token
+export const apiResetPassword = (token: string, newPassword: string) => {
+  return instance.post(`/auth/reset-password/${token}`, { password: newPassword })
+}

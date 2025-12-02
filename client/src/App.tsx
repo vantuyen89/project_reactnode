@@ -35,6 +35,7 @@ import ProductDetail from './pages/product/ProductDetail'
 import Shop from './pages/Shop/Shop'
 import PrivateRoute from './routes/PrivateRouter'
 import ProtectedRouter from './routes/ProtectedRouter'
+import ForgotPassword from './pages/auth/ForgotPassword'
 
 function App() {
   return (
@@ -85,8 +86,8 @@ function App() {
 
         <Route path='auth' element={<LayoutAuth />}>
           <Route path='register' element={<Register />} />
-
           <Route path='signin' element={<Signin />} />
+          <Route path='forgot-password' element={<ForgotPassword />} />
         </Route>
 
         <Route
