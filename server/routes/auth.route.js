@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { blockUser, curentUser, getUserAdmin, getUserChatShop, logout, pagingUsers, refreshToken, signin, signinWithGoogle, signup, unblockUser, updateUser } from "../controllers/auth.controller.js";
+import { blockUser, curentUser, getUserAdmin, getUserChatShop, logout, pagingUsers, refreshToken, resetPassword, sendOtp, signin, signinWithGoogle, signup, unblockUser, updateUser, verifyOtp } from "../controllers/auth.controller.js";
 import authentication from "../middlewares/authentication.js";
 
 
@@ -16,4 +16,7 @@ routerAuth.post("/banUser", blockUser)
 routerAuth.post("/unBanUser", unblockUser)
 routerAuth.get("/userChat", getUserChatShop)
 routerAuth.get("/getAdmin", getUserAdmin)
+routerAuth.post("/forgot-password", sendOtp);
+routerAuth.post("/verify-otp", verifyOtp);
+routerAuth.post("/reset-password/:token", resetPassword);
 export default routerAuth

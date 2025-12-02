@@ -4,6 +4,8 @@ import { StatusCodes } from "http-status-codes"
 import bcryptjs from "bcryptjs"
 import jwt from "jsonwebtoken"
 import RefreshToken from "../models/refreshTooken.model.js";
+import { sendEmail } from "../utils/sendEmail.js";
+import { nanoid } from "nanoid";
 export const signup = async (req, res) => {
     try {
         const { username, email, password, confirmPassword } = req.body;
@@ -420,3 +422,104 @@ export const getUserAdmin = async (req, res) => {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
+
+export const sendOtp = async (req, res) => {
+    try {
+        const { email } = req.body;
+
+        console.log(email)
+
+
+        const user = await Auth.findOne({ email });
+        if (!user) return res.status(400).json({ message: "Email không tồn tại!" });
+
+        const otp = Math.floor(100000 + Math.random() * 900000).toString(); // 6 số
+
+        user.otpCode = otp;
+        user.otpExp = Date.now() + 5 * 60 * 1000; // 5 phút
+        console.log('abc');
+
+
+
+        await user.save();
+        console.log('abc2');
+        await sendEmail(
+            email,
+            "Mã xác nhận (OTP) đặt lại mật khẩu",
+            `
+                <h3>OTP của bạn:</h3>
+                <h2>${otp}</h2>
+                <p>Mã có hiệu lực trong 5 phút.</p>
+            `
+        );
+
+
+        res.status(StatusCodes.OK).json({ message: "Đã gửi mã OTP qua email!" });
+
+    } catch (error) {
+
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Lỗi server" });
+    }
+};
+
+export const verifyOtp = async (req, res) => {
+    try {
+        const { email, otp } = req.body;
+
+        const user = await Auth.findOne({
+            email,
+            otpCode: otp,
+            otpExp: { $gt: Date.now() }
+        });
+
+        if (!user) {
+            return res.status(400).json({ message: "OTP không đúng hoặc đã hết hạn!" });
+        }
+
+        const resetToken = nanoid(32);
+
+        user.resetToken = resetToken;
+        user.resetTokenExp = Date.now() + 15 * 60 * 1000; // 15 phút
+        user.otpCode = null;
+        user.otpExp = null;
+
+        await user.save();
+
+        res.status(StatusCodes.OK).json({
+            message: "OTP chính xác!",
+            resetToken
+        });
+
+    } catch (error) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Lỗi server" });
+    }
+};
+
+export const resetPassword = async (req, res) => {
+    try {
+        const { token } = req.params;
+        const { password } = req.body;
+
+        const user = await Auth.findOne({
+            resetToken: token,
+            resetTokenExp: { $gt: Date.now() }
+        });
+
+        if (!user) {
+            return res.status(400).json({ message: "Token không hợp lệ hoặc đã hết hạn!" });
+        }
+
+        const hashed = await bcryptjs.hash(password, 10);
+
+        user.password = hashed;
+        user.resetToken = null;
+        user.resetTokenExp = null;
+
+        await user.save();
+
+        res.status(StatusCodes.OK).json({ message: "Đặt lại mật khẩu thành công!" });
+
+    } catch (error) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Lỗi server" });
+    }
+};

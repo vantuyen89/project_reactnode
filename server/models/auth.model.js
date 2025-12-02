@@ -38,7 +38,22 @@ const authSchema = new mongoose.Schema({
     }, provider: {
         type: String,
         default: "credential"
-    }
+    }, otpCode: {
+        type: String,
+        default: null
+    },
+    otpExp: {
+        type: Date,
+        default: null
+    },
+    resetToken: {
+        type: String,
+        default: null
+    },
+    resetTokenExp: {
+        type: Date,
+        default: null
+    },
 }, {
     timestamps: true,
     versionKey: false
