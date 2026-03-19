@@ -3,11 +3,15 @@ import Cart from "../models/cart.model.js";
 import Order from "../models/order.model.js";
 import vnpay from "../payment/vnpay.js";
 import { ProductCode, VnpLocale } from "vnpay";
+import { sendEmail } from "../utils/sendEmail.js";
+import { generateOrderEmail } from "../utils/htmlOrderEmail.js";
 
 
 export const createOrder = async (req, res) => {
     try {
         const { items, totalPrice, customInfor, paymentMethod } = req.body;
+        console.log(customInfor);
+
         if (!items) {
             return res.status(StatusCodes.BAD_REQUEST).json({ message: "Không có sản phẩm nào" })
 
@@ -24,6 +28,18 @@ export const createOrder = async (req, res) => {
             return res.status(StatusCodes.BAD_REQUEST).json({ message: "Đã xảy ra lỗi khi thanh toán" })
 
         }
+
+        await sendEmail(
+            customInfor?.email,
+            "Đơn hàng đặt thành công",
+            generateOrderEmail({
+                items,
+                totalPrice,
+                orderNumber: "DH" + Date.now(), // tạo tạm mã đơn
+                customInfor,
+                payment: paymentMethod === 1 ? "Thanh toán khi nhận hàng" : "Khác"
+            })
+        );
         const order = await Order.create({ user: req.user._id, items, totalPrice, customInfor, paymentMethod });
         const cart = await Cart.updateOne({ user: req.user._id }, { items: [] })
         res.status(StatusCodes.CREATED).json({ data: order, message: "Bạn đã đặt hàng thành công " })

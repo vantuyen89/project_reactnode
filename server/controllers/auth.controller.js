@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken"
 import RefreshToken from "../models/refreshTooken.model.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import { nanoid } from "nanoid";
+import { generateOtpEmail } from "../utils/htmlOtp.js";
 export const signup = async (req, res) => {
     try {
         const { username, email, password, confirmPassword } = req.body;
@@ -446,11 +447,7 @@ export const sendOtp = async (req, res) => {
         await sendEmail(
             email,
             "Mã xác nhận (OTP) đặt lại mật khẩu",
-            `
-                <h3>OTP của bạn:</h3>
-                <h2>${otp}</h2>
-                <p>Mã có hiệu lực trong 5 phút.</p>
-            `
+            generateOtpEmail(otp)
         );
 
 

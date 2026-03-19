@@ -37,6 +37,9 @@ const Order = () => {
     }),
     commune: z.string({
       message: 'Bạn phải nhập xã/phường'
+    }),
+    email: z.string().email({
+      message: 'Vui lọc nhập email'
     })
   })
   const form = useForm<z.infer<typeof formSchema>>({
@@ -68,7 +71,8 @@ const Order = () => {
       address: data.address,
       city: cityName?.name,
       district: districtName?.name,
-      commune: communeName?.name
+      commune: communeName?.name,
+      email: data.email
     }
     const dataOrder = {
       items: orderItem,
@@ -173,6 +177,20 @@ const Order = () => {
                           <FormLabel>Số điện thoại</FormLabel>
                           <FormControl>
                             <Input placeholder='Số điện thoại' {...field} />
+                          </FormControl>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name='email'
+                      render={({ field }) => (
+                        <FormItem className='w-[50%]'>
+                          <FormLabel>Email</FormLabel>
+                          <FormControl>
+                            <Input placeholder='Email' {...field} />
                           </FormControl>
 
                           <FormMessage />
