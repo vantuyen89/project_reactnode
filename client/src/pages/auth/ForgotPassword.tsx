@@ -14,17 +14,15 @@ import { toast } from 'sonner'
 import { apiForgotPassword, apiVerifyOtp, apiResetPassword } from '@/services/auth'
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp'
 import { useNavigate } from 'react-router-dom'
-// SCHEMA STEP 1
 const emailSchema = z.object({
   email: z.string().email('Email không hợp lệ')
 })
 
-// SCHEMA STEP 2
 const otpSchema = z.object({
   otp: z.string().min(4, 'OTP phải có 4 ký tự')
 })
 
-// SCHEMA STEP 3
+
 const resetSchema = z
   .object({
     password: z.string().min(6, 'Mật khẩu tối thiểu 6 ký tự'),
@@ -40,25 +38,21 @@ export default function ForgotPassword() {
   const [email, setEmail] = useState('')
   const [resetToken, setResetToken] = useState<null | string>(null)
   const navigate = useNavigate()
-  // FORM STEP 1
   const emailForm = useForm({
     resolver: zodResolver(emailSchema),
     defaultValues: { email: '' }
   })
 
-  // FORM STEP 2
   const otpForm = useForm({
     resolver: zodResolver(otpSchema),
     defaultValues: { otp: '' }
   })
 
-  // FORM STEP 3
   const resetForm = useForm({
     resolver: zodResolver(resetSchema),
     defaultValues: { password: '', confirmPassword: '' }
   })
 
-  // STEP 1 — gửi email
   const submitEmail = async (dataForm: any) => {
     try {
       const { data } = await apiForgotPassword(dataForm.email)
@@ -71,7 +65,6 @@ export default function ForgotPassword() {
     }
   }
 
-  // STEP 2 — verify OTP
   const submitOtp = async (data: any) => {
     try {
       const res = await apiVerifyOtp({ email, otp: data.otp })

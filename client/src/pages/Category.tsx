@@ -47,8 +47,6 @@ const Category = () => {
             spaceBetween: 30
           }
         }}
-        // onSwiper={(swiper) => console.log(swiper)}
-        // onSlideChange={() => console.log('slide change')}
       >
         {category?.map((category: Category) => {
           return (
