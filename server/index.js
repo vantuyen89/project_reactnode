@@ -42,6 +42,7 @@ app.use((req, res, next) => {
     next();
 });
 app.use(cookieParser());
+
 connectDB(process.env.HOST);
 
 app.use("/api/v1/category", routerCate)
