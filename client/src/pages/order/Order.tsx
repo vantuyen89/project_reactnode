@@ -120,8 +120,8 @@ const Order = () => {
     return 0
   }
 
-  let priceSale = calculatePriceSale(cart?.length).toLocaleString('vi-VN')
-  let totalPrice: any = ((Number(priceSale) + totalCart) * 1000).toLocaleString('vi-VN')
+  const priceSale = calculatePriceSale(cart?.length).toLocaleString('vi-VN')
+  const totalPrice: any = ((Number(priceSale) + totalCart) * 1000).toLocaleString('vi-VN')
 
   const handleOnChangeCity = async (idProvince: string) => {
     try {
